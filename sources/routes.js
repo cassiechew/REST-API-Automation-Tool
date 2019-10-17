@@ -10,7 +10,7 @@ const * = require("../models/&Model");
 router.get("/", async (req, res) => {
 
     try {
-        const & = await *.findAll();
+        const & = await *.find({});
         res.send(&);
     } catch(ex){
         console.log(ex.errors);

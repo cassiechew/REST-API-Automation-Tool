@@ -15,8 +15,6 @@ models_block = """%: {
 routes_block = """%: req.body.%,\n"""
 
 
-
-
 def main():
 
     language = sys.argv[1]
