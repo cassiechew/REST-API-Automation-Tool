@@ -3,6 +3,7 @@
 import sys
 import os
 
+# Javascript/ExpressJS
 models_block = """%: {
         type: String,
         required: true,
@@ -14,11 +15,13 @@ models_block = """%: {
 routes_block = """%: req.body.%,\n"""
 
 
+
+
 def main():
 
     language = sys.argv[1]
     name_of_api = sys.argv[2]
-    
+
     routes_file = open("./sources/routes." + language , "r")
     models_file = open("./sources/models." + language, "r")
 
@@ -30,21 +33,21 @@ def main():
     models_data_array = []
     routes_data_array = []
 
-    process_data_array (data, models_data_array, False)
-    process_data_array (data, routes_data_array, True)
+    process_data_array (data, models_data_array, models_block)
+    process_data_array (data, routes_data_array, routes_block)
 
     writeout (models_file, False, models_data_array, name_of_api, models_file_out)
     writeout (routes_file, True, routes_data_array, name_of_api, routes_file_out)
-
+    
     models_file_out.close()
     routes_file_out.close()
     routes_file.close()
     models_file.close()
 
 
-def process_data_array(data, data_array, rORm):
+def process_data_array(data, data_array, block):
     for s in data:
-        new_block = routes_block.replace("%", s) if rORm else models_block.replace("%", s)
+        new_block = block.replace("%", s)
         data_array.append(new_block)
 
 

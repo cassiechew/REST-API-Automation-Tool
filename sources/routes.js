@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const * = require("&Model");
+const * = require("../models/&Model");
 
 
 router.get("/", async (req, res) => {
-   res.send("This is the user page");
+   res.send("This is the & page");
 });
 
 
@@ -25,7 +25,7 @@ router.get("/:id", async (req, res) => {
  });
 
 
-router.post("/c/", async (req, res) => {
+router.post("/", async (req, res) => {
     try {
         const & = new *({
         %
@@ -41,7 +41,7 @@ router.post("/c/", async (req, res) => {
 });
 
 
-router.put("/c/", async (req, res) => {
+router.put("/", async (req, res) => {
     try {
         const & = await *.findOneAndUpdate(
         { 
@@ -51,7 +51,7 @@ router.put("/c/", async (req, res) => {
             %
         });
 
-        if (!friend) return res.status(404).send('Friend request not found.');
+        if (!&) return res.status(404).send('* not found.');
 
 
         res.status(200).send(&);
@@ -77,3 +77,5 @@ router.delete("/",async (req,res) => {
         res.status(500).send(ex.message);
     }
 });
+
+module.exports = router;
