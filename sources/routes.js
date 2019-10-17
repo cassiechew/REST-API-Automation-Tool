@@ -3,9 +3,22 @@ const router = express.Router();
 const * = require("../models/&Model");
 
 
+// router.get("/", async (req, res) => {
+//    res.send("This is the & page");
+// });
+
 router.get("/", async (req, res) => {
-   res.send("This is the & page");
-});
+
+    try {
+        const & = await *.findAll();
+        res.send(&);
+    } catch(ex){
+        console.log(ex.errors);
+        res.status(500).send(ex.message);
+    }
+
+    res.send("This is the & page");
+ });
 
 
 router.get("/:id", async (req, res) => {

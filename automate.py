@@ -54,7 +54,7 @@ def process_data_array(data, data_array, block):
 def writeout (OGfile, rORm, data_array, name, outFile):
     for line in OGfile:
         if "%" in line:
-            line = routes_data_processing(data_array) if rORm else models_data_processing(data_array)
+            line = line.replace("%", data_processing(data_array) if rORm else data_processing(data_array))
 
         if "&" in line:
             line =  line.replace("&", name)
@@ -65,22 +65,12 @@ def writeout (OGfile, rORm, data_array, name, outFile):
         outFile.write(line)
 
 
-def routes_data_processing(routes_data_array):
+def data_processing(data_array):
     output = ""
 
-    for o in routes_data_array:
+    for o in data_array:
         output += o
     output+= "\n"
-    return output
-
-
-def models_data_processing(models_data_array):
-    output = ""
-
-    for o in models_data_array:
-        output += o
-    output+= "\n"
-
     return output
 
 if __name__ == "__main__":
