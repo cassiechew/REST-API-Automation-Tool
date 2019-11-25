@@ -1,94 +1,14 @@
-const express = require("express");
+import express from 'express';
+import * from '../controllers/&Controller';
+
 const router = express.Router();
-const * = require("../models/&Model");
 
+const & = new *();
 
-// router.get("/", async (req, res) => {
-//    res.send("This is the & page");
-// });
+router.get('/',     &.getAll);
+router.get('/:id',  &.getOne);
+router.post('/',    &.create);
+router.put('/',     &.update);
+router.delete('/',  &.delete);
 
-router.get("/", async (req, res) => {
-
-    try {
-        const & = await *.find({});
-        res.send(&);
-    } catch(ex){
-        console.log(ex.errors);
-        res.status(500).send(ex.message);
-    }
-
-    res.send("This is the & page");
- });
-
-
-router.get("/:id", async (req, res) => {
-    
-    try {
-        const & = await *.findOne({
-            %
-        })
-
-        res.send(&);
-
-    }
-    catch(ex){
-        console.log(ex.errors);
-        res.status(500).send(ex.message);
-    }
- });
-
-
-router.post("/", async (req, res) => {
-    try {
-        const & = new *({
-        %
-        });
-        await &.save();
-
-        res.status(200).send(&);
-    }
-    catch(ex){
-        console.log(ex.errors);
-        res.status(500).send(ex.message);
-    }
-});
-
-
-router.put("/", async (req, res) => {
-    try {
-        const & = await *.findOneAndUpdate(
-        { 
-            %
-        },
-        {
-            %
-        });
-
-        if (!&) return res.status(404).send('* not found.');
-
-
-        res.status(200).send(&);
-    }
-    catch(ex){
-        console.log(ex.errors);
-        res.status(500).send(ex.message);
-    }
-});
-
-
-router.delete("/",async (req,res) => {
-    
-    try {
-        const & = await *.findOneAndRemove({
-            %
-        });
-        
-        res.send(&);
-    }
-    catch(ex){
-        console.log(ex.errors);
-        res.status(500).send(ex.message);
-    }
-});
-
-module.exports = router;
+export default router;

@@ -1,0 +1,169 @@
+const express = require("express");
+const router = express.Router();
+const jwt = require("jsonwebtoken");
+const withAuth = require("../middleware/middleware");
+var { User, validateRegister, validateChange } = require("../models/user");
+
+// router.get("/", function (req, res) {
+//     res.send("This is the user page");
+// });
+
+//TODO: For real application, should keep this secret an actual secret
+//using environment variables or some other method and make sure you
+//DO NOT commit it to version control if you happen to be using git
+const secret = "This is a secret String";
+
+//find a user with the given username and verify that the given
+//password is correct. If the password is correct, we will issue
+//a signed token to the requester.
+router.post("/authenticate", function(req, res) {
+  const { username, password } = req.body;
+  User.findOne({ username }, function(err, user) {
+    if (err) {
+      console.log(err);
+      res.status(500).json({
+        error: "Internal error please try again"
+      });
+    } else if (!user) {
+      res.status(401).json({
+        error: "Incorrect username or password"
+      });
+    } else {
+      user.isCorrectPassword(password, function(err, same) {
+        if (err) {
+          res.status(500).json({
+            error: "Internal error please try again"
+          });
+        } else if (!same) {
+          res.status(401).json({
+            error: "Incorrect username or password"
+          });
+        } else {
+          //Issue token
+          const payload = { username };
+          const token = jwt.sign(payload, secret, {
+            expiresIn: "1h"
+          });
+          res.cookie("token", token, { httpOnly: true }).sendStatus(200);
+          //res.send(token);
+        }
+      });
+    }
+  });
+});
+//Verifying Tokens
+router.get("/checkToken", withAuth, function(req, res) {
+  res.sendStatus(200);
+});
+
+//return all users and full name
+router.get("/all", withAuth, async (req, res) => {
+  try {
+    const users = await User.find().sort("username");
+    let output = [];
+    users.forEach(users => {
+      output.push(users["username"]);
+    });
+    res.send(output);
+  } catch (ex) {
+    console.log(ex.errors);
+    res.status(500).send(ex.message);
+  }
+});
+
+router.get("/username/:username", async (req, res) => {
+  //get user details of users or search user
+
+  try {
+    const user = await User.findOne({ username: req.params.username }).select(
+      "firstName lastName email"
+    );
+    // TODO: EXCLUDE PASSWORD
+
+    if (!user)
+      return res
+        .status(404)
+        .send("The user with the given username was not found.");
+
+    res.send(user);
+  } catch (ex) {
+    console.log(ex.errors);
+    res.status(500).send(ex.message);
+  }
+});
+
+// moved from home.js
+router.post("/register", async (req, res) => {
+  try {
+    const { error } = validateRegister(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
+
+    const user = new User({
+      %
+    });
+    await user.save();
+
+    // generate wallet key pair from web3.js
+
+    res.status(200).send(user);
+  } catch (ex) {
+    console.log(ex.errors);
+    res.status(500).send(ex.message);
+  }
+});
+
+router.put("/username/:username", withAuth, async (req, res) => {
+  try {
+    const { error } = validateChange(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
+
+    const user = await User.findOneAndUpdate(
+      { username: req.params.username },
+      {
+        // ATTENTION: if any field is empty, null is returned to database
+        // TODO: frontend solution can fix
+        firstName: req.body.firstName,
+        lastName: req.body.lastName
+      },
+      { new: true }
+    );
+
+    if (!user)
+      return res
+        .status(404)
+        .send("The user with the given username was not found.");
+
+    res.send(user);
+  } catch (ex) {
+    console.log(ex.errors);
+    res.status(500).send(ex.message);
+  }
+});
+
+router.get("/changePassword", function(req, res) {
+  res.send("This is the password page");
+});
+
+router.put("/changePassword", withAuth, async (req, res) => {
+  // TODO: encryption
+  // Update password
+
+  try {
+    //const { error } = validate(req.body);
+    //if (error) return res.status(400).send(error.details[0].message);
+
+    const user = await User.findOneAndUpdate(
+      { username: req.body.username },
+      { password: req.body.password }
+    );
+
+    if (!user) return res.status(404).send("User not found.");
+
+    res.send("Password updated successfully");
+  } catch (ex) {
+    console.log(ex.errors);
+    res.status(500).send(ex.message);
+  }
+});
+
+module.exports = router;

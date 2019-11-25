@@ -22,26 +22,33 @@ def main():
 
     routes_file = open("./sources/routes." + language , "r")
     models_file = open("./sources/models." + language, "r")
+    controllers_file = open("./sources/controllers." + language, "r")
 
-    routes_file_out = open("./" + name_of_api + "." + language, "w")
-    models_file_out = open("./" + name_of_api + "Model." + language, "w")
+    routes_file_out = open("./out/" + name_of_api + "." + language, "w")
+    models_file_out = open("./out/" + name_of_api + "Model." + language, "w")
+    controllers_file_out = open("./out/" + name_of_api + "Controller." + language, "w")
 
     data = sys.argv[3:]
 
     models_data_array = []
     routes_data_array = []
+    controllers_data_array = []
 
     process_data_array (data, models_data_array, models_block)
     process_data_array (data, routes_data_array, routes_block)
+    process_data_array (data, controllers_data_array, routes_block)
 
     writeout (models_file, False, models_data_array, name_of_api, models_file_out)
     writeout (routes_file, True, routes_data_array, name_of_api, routes_file_out)
+    writeout (controllers_file, True, controllers_data_array, name_of_api, controllers_file_out)
     
     models_file_out.close()
     routes_file_out.close()
+    controllers_file_out.close()
+
     routes_file.close()
     models_file.close()
-
+    controllers_file.close()
 
 def process_data_array(data, data_array, block):
     for s in data:
